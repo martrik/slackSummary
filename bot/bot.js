@@ -11,7 +11,7 @@ var harassment_keywords = ['^.*\\bfuck you\\b.*$', '^.*\\barse\\b.*$', '^.*\\bar
                           '^.*\\bbastard\\b.*$', '^.*\\bbell\\b.*$', '^.*\\bbellend\\b.*$', '^.*\\bberk\\b.*$',
                           '^.*\\bbint\\b.*$', '^.*\\bblimey\\b.*$', '^.*\\bblighter\\b.*$', '^.*\\bbloody\\b.*$',
                           '^.*\\bblooming\\b.*$', '^.*\\bbollocks\\b.*$', '^.*\\bbugger\\b.*$', '^.*\\bcad\\b.*$',
-                          '^.*\\bcac\\b.*$', '^.*\\bchav\\b.*$'];
+                          '^.*\\bcac\\b.*$', '^.*\\bchav\\b.*$', '^.*\\bmalparido\\b.*$'];
 
 // connect the bot to a stream of messages
 controller.spawn({
@@ -30,15 +30,16 @@ controller.hears(['^.*\\bhello\\b.*$', '^.*\\bhi\\b.*$', '^.*\\bhey\\b.*$'],['di
 });
 
 // summary message channels
-controller.hears(['^.*\\bsummarize\\b.*$', '^.*\\bcatchup\\b.*$'] ,['direct_mention','mention'] ,function(bot, message) {
+controller.hears(['^.*\\bsummarize\\b.*$', '^.*\\bcatchup\\b.*$', '^.*\\bsummarise\\b.*$'] ,['direct_mention','mention'] ,function(bot, message) {
   get_summary_and_post(bot, message, message.channel);
 });
 
-controller.hears(['^summarize$', '^catchup$'], ['direct_message'], function(bot, message){
+controller.hears(['^summarize$', '^catchup$', '^summarise$'], ['direct_message'], function(bot, message){
   bot.reply(message, 'ERROR: You should ask for a concrete channel.');
 });
 
-controller.hears(['^summarize[^<]*(<#([^|]*)\\|([^>]*)>)[^$]*$', '^catchup[^<]*(<#([^|]*)\\|([^>]*)>)[^$]*$'], ['direct_message'], function(bot, message){
+controller.hears(['^summarize[^<]*(<#([^|]*)\\|([^>]*)>)[^$]*$', '^catchup[^<]*(<#([^|]*)\\|([^>]*)>)[^$]*$',
+                  '^summarise[^<]*(<#([^|]*)\\|([^>]*)>)[^$]*$'], ['direct_message'], function(bot, message){
   var channel_id = message.match[2];
   get_summary_and_post(bot, message, channel_id)
 });
@@ -58,7 +59,7 @@ controller.hears(harassment_keywords,['ambient'],function(bot, message) {
                 var message_to_admin = {
                   "channel": info.channel.id,
                   "text": 'You should check <#'+message.channel+'|>. There might be harassing going on.',
-                  "username": "Harassment bot"
+                  "as_user": true
                 }
                 bot.api.chat.postMessage(message_to_admin, function(err2, info){});
               }
@@ -80,7 +81,7 @@ function get_summary_and_post(bot, message, channel){
       summary_message['channel'] = message.channel;
       summary_message['text'] = json.text;
       summary_message['attachments'] = json.attachments;
-      summary_message['username'] = 'Catchup bot';
+      summary_message['as_user'] = true;
       bot.api.chat.postMessage(summary_message, function(err2, info){});
     }else{
       bot.reply(message, "An error has occurred requesting your summary. ERROR: "+response.statusCode);
