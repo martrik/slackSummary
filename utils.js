@@ -1,5 +1,6 @@
 const Slack = require('slack-node');
 const frequency = require('./frequency.js');
+const color = require('./color.js');
 
 var apiToken;
 var slack;
@@ -27,16 +28,16 @@ function getUserImages(messages, count, callback) {
   });
 }
 
-function isImportant(message, stats) {
+function importance(message, stats) {
   const reactions = message.reactions;
 
-  var l = message.text.length >= stats.averageLen;
-  var r = reactions && reactions.length >= stats.averageReact;
-  var n = message.text.match('^.*<!(everyone|channel)>.*$') !== null;
-  var f = frequency.isEnough(message, stats.history);
-  var m = message.text.match('^.*<@('+userId+').*>.*$') !== null;
+  var l = message.text.length >= stats.averageLen ? 1 : 0;
+  var r = reactions && reactions.length >= stats.averageReact ? 1 : 0;
+  var n = message.text.match('^.*<!(everyone|channel)>.*$') !== null ? 1 : 0;
+  var f = frequency.isEnough(message, stats.history) ? 1 : 0;
+  var m = message.text.match('^.*<@('+userId+').*>.*$') !== null ? 1 : 0;
 
-  return l || r || n || f || m;
+  return l + r + n + f + m;
 }
 
 function parseMessages(messages, stats) {
@@ -44,11 +45,12 @@ function parseMessages(messages, stats) {
 
   while (messages.length > 0 && parsed.length < catchUpMax) {
     var message = messages.pop();
+    var importanceVal = importance(message, stats);
 
-    if (message["type"] == "message" && isImportant(message, stats)) {
+    if (message["type"] == "message" && importanceVal > 0) {
       parsed.push({
         "fallback": message["text"],
-        "color": "#36a64f",
+        "color": color.messageColor(importanceVal),
         "author_name": message["user"],
         "author_icon": "https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcT3U6TbpVZPjBgA4aUNjtFXbw1f5kL2S_vsM7Xhlzi62PcAQiRXRjw-CBc",
         "text": message["text"],
@@ -95,8 +97,6 @@ function getMessages(channel, callback) {
     const rawMessages = response.messages;
     const stats = analizeMessages(rawMessages);
     const messages = parseMessages(rawMessages, stats);
-
-    console.log(messages);
 
     getUserImages(messages, 0, function(messagesPic) {
       const message = {

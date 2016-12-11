@@ -49,6 +49,7 @@ exports.isEnough = function isEnough(message, history) {
     }
     return false;
   }
+  return false;
 }
 
 function cleanTS(ts) {
