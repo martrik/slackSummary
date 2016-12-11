@@ -147,7 +147,7 @@ function getChannelId(name, callback) {
 }
 
 exports.handleRequest = function(params, callback) {
-  apiToken = 'xoxp-2535407483-2535407485-115402024293-f77ba387330159d6e230c1fb38c56492';
+  apiToken = 'xoxp-2535407483-2535407485-114638924193-1baf043bfcb0050303b27994b802a2fa';
   userId = params.user_id;
   slack = new Slack(apiToken);
 

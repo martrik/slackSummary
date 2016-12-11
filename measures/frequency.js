@@ -17,7 +17,7 @@ exports.isEnough = function isEnough(message, history) {
     initialised = true;
   }
 
-  var averageFreq   = 0;
+  var averageFreq   = 0.0001;
   //if (averageFreq === 0) {
     var totalTime = 0;
     var lastTs    = 0;
