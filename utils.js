@@ -46,6 +46,10 @@ function importance(message, stats) {
   var m = mentions.toThemselves(message, userId);
   var n = mentions.toTheChannel(message);
 
+  if (f == 1) {
+    console.log("high freq: " + message.text);
+  }
+
   return lFactor * l +
          rFactor * r + 
          fFactor * f +
@@ -61,6 +65,7 @@ function selectMessages(messages, stats) {
     var importanceVal = importance(message, stats);
 
     if (message["type"] == "message" && importanceVal > 0) {
+      //console.log("important : " + message.text);
       parsed.push({
         "fallback": message["text"],
         "color": color.messageColor(importanceVal),
