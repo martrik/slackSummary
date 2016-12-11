@@ -34,16 +34,9 @@ function isImportant(message, stats) {
   var r = reactions && reactions.length >= stats.averageReact;
   var n = message.text.match('^.*<!(everyone|channel)>.*$') !== null;
   var f = frequency.isEnough(message, stats.history);
-
-<<<<<<< HEAD
-  return l || r || n || f;
-=======
   var m = message.text.match('^.*<@('+userId+').*>.*$') !== null;
-  console.log(userId);
-  console.log(message)
 
-  return l || r || n || m;
->>>>>>> 4db92ba8ef64f568726c7716eebd0ce26ad3f897
+  return l || r || n || f || m;
 }
 
 function parseMessages(messages, stats) {
@@ -99,11 +92,6 @@ function getMessages(channel, callback) {
       callback(err, null);
     }
 
-<<<<<<< HEAD
-    //console.log(response);
-
-=======
->>>>>>> 4db92ba8ef64f568726c7716eebd0ce26ad3f897
     const rawMessages = response.messages;
     const stats = analizeMessages(rawMessages);
     const messages = parseMessages(rawMessages, stats);
