@@ -1,4 +1,6 @@
 const Slack = require('slack-node');
+const frequency = require('./frequency.js');
+
 var apiToken;
 var slack;
 
@@ -31,8 +33,9 @@ function isImportant(message, stats) {
   var l = message.text.length >= stats.averageLen;
   var r = reactions && reactions.length >= stats.averageReact;
   var n = message.text.match('^.*<!(everyone|channel)>.*$') !== null;
+  var f = frequency.isEnough(message, stats.history);
 
-  return l || r || n;
+  return l || r || n || f;
 }
 
 function parseMessages(messages, stats) {
@@ -62,7 +65,7 @@ function parseMessages(messages, stats) {
 function analizeMessages(messages) {
   var averageReactions = 0;
   var averageLength = 0;
-  const freqHistory = {};
+  const msgHistory = {};
   const length = messages.length;
 
   for (var i = 0; i < messages.length; i++) {
@@ -70,18 +73,17 @@ function analizeMessages(messages) {
     if (message.type == "message") {
       averageReactions += (message.reactions ? message.reactions.length : 0) / length;
       averageLength += message.text.length / length;
-      var cleanTs = message.ts.split('.')[0];
-      freqHistory[cleanTs] = freqHistory[cleanTs] ? freqHistory[cleanTs] + 1 : i;
+      msgHistory[message.ts] = i;
     }
   }
 
-  console.log(freqHistory);
-
-  return { averageReact: averageReactions, averageLen: averageLength };
+  return { averageReact: averageReactions,
+           averageLen:   averageLength,
+           history:      msgHistory  };
 }
 
 function getMessages(channel, callback) {
-  console.log('Getting messages from', channel);
+  //console.log('Getting messages from', channel);
   slack.api('channels.history', {
     channel: channel
   }, function(err, response) {
@@ -89,7 +91,7 @@ function getMessages(channel, callback) {
       callback(err, null);
     }
 
-    console.log(response);
+    //console.log(response);
 
     const rawMessages = response.messages;
     const stats = analizeMessages(rawMessages);
@@ -108,7 +110,6 @@ function getMessages(channel, callback) {
     });
   });
 }
-
 
 exports.handleRequest = function(params, callback) {
       apiToken = 'xoxp-2535407483-2535407485-115961733031-bb118c141ce2b30a4b9104a8755a5064';
