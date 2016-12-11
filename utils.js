@@ -41,7 +41,7 @@ function getUserImages(messages, count, callback) {
 
 function importance(message, stats) {
   var l = length.isConsiderable(message, stats.averageLen);
-  var r = reactions.areConsiderable(message, stats.averageReactions);
+  var r = reactions.areConsiderable(message, stats.averageReact);
   var f = frequency.isEnough(message, stats.history);
   var m = mentions.toThemselves(message, userId);
   var n = mentions.toTheChannel(message);
@@ -109,6 +109,8 @@ function getMessages(channel, callback) {
     const rawMessages = response.messages;
     const stats = analizeMessages(rawMessages);
     const messages = selectMessages(rawMessages, stats);
+
+    console.log(messages);
 
     getUserImages(messages, 0, function(messagesPic) {
       const message = {
