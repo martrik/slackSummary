@@ -2,7 +2,7 @@ const focusInterval = 120; // seconds
 const freqFactor    = 3.2;
 
 var unTrackedMsgs = [];
-var averageFreq   = 0;
+var initialised   = false;
 
 exports.isEnough = function isEnough(message, history) {
   // Used for calculations as well as the unique identifier
@@ -10,21 +10,31 @@ exports.isEnough = function isEnough(message, history) {
   var messageTs = cleanTS(message.ts);
 
   // Initialise, calulate the average frequency
-  if (averageFreq === 0) {
+  if (!initialised) {
+    for (var ts in history) {
+      unTrackedMsgs.push(ts);
+    }
+    initialised = true;
+  }
+
+  var averageFreq   = 0;
+  //if (averageFreq === 0) {
     var totalTime = 0;
     var lastTs    = 0;
     var messages  = 0;
     for (var ts in history) {
-      unTrackedMsgs.push(ts)
+      if (ts < messageTs) {
+        if (lastTs == 0) lastTs = ts;
+        totalTime += (lastTs - ts);
+        lastTs = ts;
 
-      if (lastTs == 0) lastTs = ts;
-      totalTime += (lastTs - ts);
-      lastTs = ts;
-
-      messages += 1
+        messages += 1
+      }
     }
     averageFreq = messages / totalTime;
-  }
+  //}
+
+
 
   // Check only if the message is important
   if (contains(unTrackedMsgs, messageTs)) {
@@ -32,12 +42,16 @@ exports.isEnough = function isEnough(message, history) {
     // conversation.
     var periodMessages = [];
 
+    var finalTime = 0;
     for (var ts in history) {
       if (ts - messageTs < focusInterval && ts - messageTs > 0) {
         periodMessages.push(ts);
+        finalTime = ts;
       }
     }
-    var periodFreq = periodMessages.length / focusInterval;
+    var periodFreq = periodMessages.length / (finalTime - messageTs);
+
+    console.log(message.text + " " + averageFreq + " " + periodFreq);
 
     // Make decision about its importance and if it is, forget
     // about all the messages used to make such decision.

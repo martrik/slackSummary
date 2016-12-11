@@ -65,7 +65,6 @@ function selectMessages(messages, stats) {
     var importanceVal = importance(message, stats);
 
     if (message["type"] == "message" && importanceVal > 0) {
-      //console.log("important : " + message.text);
       parsed.push({
         "fallback": message["text"],
         "color": color.messageColor(importanceVal),
