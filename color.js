@@ -1,4 +1,4 @@
-exports.isEnough = function messageColor(importance) {
+exports.messageColor = function messageColor(importance) {
   switch (importance) {
     case 1:
       return "#a0d080";
