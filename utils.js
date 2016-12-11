@@ -31,8 +31,8 @@ function getUserImages(messages, count, callback) {
 function importance(message, stats) {
   const reactions = message.reactions;
 
-  var l = message.text.length >= stats.averageLen ? 1 : 0;
-  var r = reactions && reactions.length >= stats.averageReact ? 1 : 0;
+  var l = message.text.length >= stats.averageLen * 2 ? 1 : 0;
+  var r = reactions && reactions.length >= stats.averageReact * 2 ? 1 : 0;
   var n = message.text.match('^.*<!(everyone|channel)>.*$') !== null ? 1 : 0;
   var f = frequency.isEnough(message, stats.history) ? 1 : 0;
   var m = message.text.match('^.*<@('+userId+').*>.*$') !== null ? 1 : 0;
