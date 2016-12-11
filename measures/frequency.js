@@ -45,11 +45,11 @@ exports.isEnough = function isEnough(message, history) {
       for (var i = 0; i < periodMessages.length; i++) {
         remove(unTrackedMsgs, periodMessages[i]);
       }
-      return true;
+      return 1;
     }
-    return false;
+    return 0;
   }
-  return false;
+  return 0;
 }
 
 function cleanTS(ts) {
