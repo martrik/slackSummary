@@ -53,7 +53,7 @@ function importance(message, stats) {
          nFactor * n;
 }
 
-function parseMessages(messages, stats) {
+function selectMessages(messages, stats) {
   var parsed = [];
 
   while (messages.length > 0 && parsed.length < catchUpMax) {
@@ -108,7 +108,7 @@ function getMessages(channel, callback) {
 
     const rawMessages = response.messages;
     const stats = analizeMessages(rawMessages);
-    const messages = parseMessages(rawMessages, stats);
+    const messages = selectMessages(rawMessages, stats);
 
     getUserImages(messages, 0, function(messagesPic) {
       const message = {
@@ -122,9 +122,34 @@ function getMessages(channel, callback) {
   });
 }
 
+function getChannelId(name, callback) {
+  slack.api('channels.list', {
+    token: apiToken
+  }, function(err, response) {
+    if (!err && response.ok) {
+      const channels = response.channels;
+
+      for (var i = 0; i < channels.length; i++) {
+        var channel = channels[i];
+
+        if (channel.name === name) {
+          callback(channel.id);
+        }
+      }
+    }
+  });
+}
+
 exports.handleRequest = function(params, callback) {
-      apiToken = 'xoxp-2535407483-2535407485-115961733031-bb118c141ce2b30a4b9104a8755a5064';
-      userId = params.user_id;
-      slack = new Slack(apiToken);
-      getMessages(params.channel_id, callback);
+  apiToken = 'xoxp-2535407483-2535407485-115961733031-bb118c141ce2b30a4b9104a8755a5064';
+  userId = params.user_id;
+  slack = new Slack(apiToken);
+
+  if (params.channel_id) {
+    getMessages(params.channel_id, callback);
+  } else if (params.channel_name) {
+    getChannelId(params.channel_name, function(id) {
+      getMessages(id, callback);
+    });
+  }
 }
