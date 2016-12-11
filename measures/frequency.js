@@ -71,7 +71,10 @@ function contains(a, obj) {
 }
 
 function remove(a, obj) {
-  for (var i = a.length-1; i--;) {
-  	if (a[i] === obj) a.splice(i, 1);
-  }
+  var i = a.length;
+    while (i--) {
+       if (a[i] === obj) {
+           a.splice(i, 1);
+       }
+    }
 }
