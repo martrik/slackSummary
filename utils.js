@@ -5,7 +5,13 @@ const length    = require('./measures/length.js');
 const reactions = require('./measures/reactions.js');
 const mentions  = require('./measures/mentions.js');
 
-const color = require('./color.js');
+const fFactor = 1;
+const lFactor = 1;
+const rFactor = 1;
+const mFactor = 1;
+const nFactor = 1;
+
+const color = require('./style/color.js');
 
 var apiToken;
 var slack;
@@ -40,7 +46,11 @@ function importance(message, stats) {
   var m = mentions.toThemselves(message, userId);
   var n = mentions.toTheChannel(message);
 
-  return l + r + f + m + n;
+  return lFactor * l +
+         rFactor * r + 
+         fFactor * f +
+         mFactor * m +
+         nFactor * n;
 }
 
 function parseMessages(messages, stats) {
@@ -89,7 +99,6 @@ function analizeMessages(messages) {
 }
 
 function getMessages(channel, callback) {
-  //console.log('Getting messages from', channel);
   slack.api('channels.history', {
     channel: channel
   }, function(err, response) {
@@ -115,12 +124,7 @@ function getMessages(channel, callback) {
 
 exports.handleRequest = function(params, callback) {
       apiToken = 'xoxp-2535407483-2535407485-115961733031-bb118c141ce2b30a4b9104a8755a5064';
-      console.log(params);
       userId = params.user_id;
       slack = new Slack(apiToken);
       getMessages(params.channel_id, callback);
-
-      // const command = params.command;
-      // const channel = params.channel_name;
-      // const commandText = params.text;
 }
