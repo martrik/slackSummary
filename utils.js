@@ -70,7 +70,8 @@ function analizeMessages(messages) {
     if (message.type == "message") {
       averageReactions += (message.reactions ? message.reactions.length : 0) / length;
       averageLength += message.text.length / length;
-      freqHistory[message.ts] = freqHistory[message.ts] ? freqHistory[message.ts] + 1 : i;
+      var cleanTs = message.ts.split('.')[0];
+      freqHistory[cleanTs] = freqHistory[cleanTs] ? freqHistory[cleanTs] + 1 : i;
     }
   }
 
@@ -87,6 +88,8 @@ function getMessages(channel, callback) {
     if (err) {
       callback(err, null);
     }
+
+    console.log(response);
 
     const rawMessages = response.messages;
     const stats = analizeMessages(rawMessages);
@@ -108,7 +111,7 @@ function getMessages(channel, callback) {
 
 
 exports.handleRequest = function(params, callback) {
-      apiToken = 'xoxp-2535407483-2535407485-115893520855-a01018264ac2d5bd44ff4b2a764143e5';
+      apiToken = 'xoxp-2535407483-2535407485-115961733031-bb118c141ce2b30a4b9104a8755a5064';
       slack = new Slack(apiToken);
       getMessages(params.channel_id, callback);
 
