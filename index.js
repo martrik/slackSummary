@@ -20,7 +20,7 @@ function processEvent(event, callback) {
 
 
 exports.handler = (event, context, callback) => {
-  console.log('Event', event);
+  //console.log('Event', event);
     const done = (err, res) => callback(null, {
         statusCode: err ? '400' : '200',
         body: err ? (err.message || err) : JSON.stringify(res),

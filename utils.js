@@ -65,7 +65,6 @@ function selectMessages(messages, stats) {
     var importanceVal = importance(message, stats);
 
     if (message["type"] == "message" && importanceVal > 0) {
-      //console.log("important : " + message.text);
       parsed.push({
         "fallback": message["text"],
         "color": color.messageColor(importanceVal),
@@ -148,7 +147,7 @@ function getChannelId(name, callback) {
 }
 
 exports.handleRequest = function(params, callback) {
-  apiToken = 'xoxp-2535407483-2535407485-115961733031-bb118c141ce2b30a4b9104a8755a5064';
+  apiToken = 'xoxp-2535407483-2535407485-114638924193-1baf043bfcb0050303b27994b802a2fa';
   userId = params.user_id;
   slack = new Slack(apiToken);
 

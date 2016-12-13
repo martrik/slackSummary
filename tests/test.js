@@ -1,4 +1,5 @@
 const utils = require('../utils.js');
 
-utils.handleRequest({ channel_name: "development" }, function(err, res) {
+utils.handleRequest({ channel_name: "deployment" }, function(err, res) {
+    console.log(res);
 });
