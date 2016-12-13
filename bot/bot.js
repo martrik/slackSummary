@@ -15,7 +15,7 @@ var harassment_keywords = ['^.*\\bfuck you\\b.*$', '^.*\\barse\\b.*$', '^.*\\bar
 
 // connect the bot to a stream of messages
 controller.spawn({
-  token: 'xoxb-115867302694-o5cVZG9t12JwrVCp0tOKDp60',
+  token: 'xoxb-115867302694-qIeAeKdU1MfehnpQWfGvKoad',
 }).startRTM()
 
 // welcome message
@@ -74,7 +74,7 @@ controller.hears(harassment_keywords,['ambient'],function(bot, message) {
 
 function get_summary_and_post(bot, message, channel){
   //bot.reply(message, 'Summarizing ' + channel + ' on the last 24h');
-  request.post({url:'https://2z24ldv9og.execute-api.eu-west-1.amazonaws.com/prod/slackSummary', body: 'channel_id='+channel+'&token=lMrImvMKRAReyZwXbKyMvvdt'}, function (error, response, body) {
+  request.post({url:'https://2z24ldv9og.execute-api.eu-west-1.amazonaws.com/prod/slackSummary', body: 'channel_id='+channel+'&token=lMrImvMKRAReyZwXbKyMvvdt&user_id='+message.user}, function (error, response, body) {
     if (!error && response.statusCode == 200) {
       var json = JSON.parse(body);
       var summary_message = {};
